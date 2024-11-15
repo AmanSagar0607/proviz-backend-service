@@ -1,6 +1,5 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { applicationRouter } from './routes/applications.js';
@@ -12,25 +11,25 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Updated CORS configuration
-app.use(cors({
-  origin: function(origin, callback) {
-    const allowedOrigins = [
-      process.env.FRONTEND_URL,
-      'https://proviz-school-ai.vercel.app',
-      'http://localhost:5173'
-    ];
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 200
-}));
+// CORS configuration
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    'https://proviz-school-ai.vercel.app',
+    'http://localhost:5173'
+  ];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
 app.use(helmet());
 app.use(express.json());
@@ -66,7 +65,13 @@ app.use('/api/admin', adminRouter);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  res.header('Access-Control-Allow-Origin', '*');
   res.status(500).send('Something broke!');
+});
+
+// Catch-all route for CORS preflight
+app.options('*', (req, res) => {
+  res.sendStatus(200);
 });
 
 app.listen(PORT, () => {
