@@ -2,20 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
+      "src": "backend/server.js",
       "use": "@vercel/node"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "server.js"
-    }
-  ],
   "env": {
-    "MONGODB_URI": "@mongodb_uri",
+    "MONGODB_URI": "@MONGODB_URI",
     "PORT": "5000",
-    "JWT_SECRET": "@jwt_secret",
-    "FRONTEND_URL": "https://proviz-school-ai.vercel.app"
+    "JWT_SECRET": "@JWT_SECRET",
+    "FRONTEND_URL": "http://localhost:5173"
   }
 }
