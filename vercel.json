@@ -7,9 +7,9 @@
     }
   ],
   "env": {
-    "MONGODB_URI": "@MONGODB_URI",
+    "MONGODB_URI": "MONGODB_URI",
     "PORT": "5000",
-    "JWT_SECRET": "@JWT_SECRET",
+    "JWT_SECRET": "JWT_SECRET",
     "FRONTEND_URL": "http://localhost:5173"
   }
 }
