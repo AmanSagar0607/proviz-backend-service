@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { applicationRouter } from './routes/applications.js';
 import { adminRouter } from './routes/admin.js';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -13,14 +14,22 @@ const PORT = process.env.PORT || 5000;
 
 // Updated CORS configuration
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL,
-    'https://proviz-school-ai.vercel.app',
-    'http://localhost:5173', // Local development URL
-  ],
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'https://proviz-school-ai.vercel.app',
+      'http://localhost:5173'
+    ];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
+  optionsSuccessStatus: 200
 }));
 
 app.use(helmet());
@@ -28,7 +37,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Rate limiting
-import rateLimit from 'express-rate-limit';
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -64,3 +72,10 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+// Log the allowed origins for debugging
+console.log('Allowed origins:', [
+  process.env.FRONTEND_URL,
+  'https://proviz-school-ai.vercel.app',
+  'http://localhost:5173'
+]);
