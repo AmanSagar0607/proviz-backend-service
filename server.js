@@ -16,7 +16,7 @@ app.use(cors({
   origin: [
     process.env.FRONTEND_URL,
     'https://proviz-school-ai.vercel.app',
-    'http://localhost:5173'
+    'http://localhost:5173', // Local development URL
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -31,18 +31,18 @@ app.use(express.urlencoded({ extended: true }));
 import rateLimit from 'express-rate-limit';
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100
+  max: 100,
 });
 app.use(limiter);
 
-// Connect to MongoDB
+// MongoDB connection
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('Connected to MongoDB Atlas');
+    console.log('Connected to MongoDB');
   } catch (error) {
     console.error('MongoDB connection error:', error);
     process.exit(1);
@@ -63,6 +63,4 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-
 });
-

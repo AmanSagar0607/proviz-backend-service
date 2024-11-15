@@ -7,9 +7,9 @@
     }
   ],
   "env": {
-    "MONGODB_URI": "MONGODB_URI",
+    "MONGODB_URI": "mongodb+srv://your_connection_string",
     "PORT": "5000",
-    "JWT_SECRET": "JWT_SECRET",
-    "FRONTEND_URL": "http://localhost:5173"
+    "JWT_SECRET": "your_jwt_secret",
+    "FRONTEND_URL": "https://proviz-school-ai.vercel.app" 
   }
 }
